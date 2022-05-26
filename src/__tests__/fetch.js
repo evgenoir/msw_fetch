@@ -17,6 +17,10 @@ describe("Fetch under Jest tests", () => {
         })
 
         console.log("Response:")
-        console.log(response)       // Error - Response doesn't contain body
+        console.log(response)
+
+        expect(response).toMatchObject({    // Error - Response doesn't contain body
+            body: "test OK"
+        })
     })
 })
