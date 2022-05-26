@@ -1,25 +1,37 @@
-import logo from './logo.svg';
-import './App.css';
+import {setupWorker} from "msw"
+import {useEffect} from "react"
+import {handlers} from "./mswHandlers"
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+// Start the Mock Service Worker
+export const worker = setupWorker()
+worker.start({
+    // I don't want to see warning in the browser console (default is warn)!
+    onUnhandledRequest: 'bypass'
+})
+
+export default function App() {
+    // Set handlers on component mount and reset on component unmount
+    useEffect(() => {
+        worker.resetHandlers(...handlers)
+        return () => worker.resetHandlers()
+    }, [])
+
+    const clickHandler = async () => {
+        console.log("Fetch clicked")
+
+        const response = await fetch('/test', {
+            method: 'POST',
+            headers: new Headers({
+                authorization: "Bearer some_token #1"
+            })
+        })
+
+        console.log(response)
+    }
+
+    return (
+        <>
+            <button onClick={clickHandler}>Fetch</button>
+        </>
+    );
 }
-
-export default App;
