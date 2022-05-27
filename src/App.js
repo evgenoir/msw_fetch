@@ -26,7 +26,10 @@ export default function App() {
             })
         })
 
-        console.log(response)
+        // Read body as a text from response
+        const responseBody = await response.text()
+
+        console.log(`Response body: ${responseBody}`)
     }
 
     return (
